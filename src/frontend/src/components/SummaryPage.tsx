@@ -174,7 +174,7 @@ export default function SummaryPage() {
   return (
     <div className="space-y-8">
       {/* Hero Banner */}
-      <div className="relative overflow-hidden bg-foreground rounded-2xl p-6 sm:p-8 field-pattern">
+      <div className="relative overflow-hidden bg-[#1a3a8f] rounded-2xl p-6 sm:p-8 field-pattern">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
             <img
@@ -258,7 +258,6 @@ export default function SummaryPage() {
                 ? `${wins}W–${losses}L${ties > 0 ? `–${ties}T` : ""}`
                 : undefined
             }
-            accent
           />
           <StatCard
             icon={<Target className="w-5 h-5" />}
@@ -293,7 +292,6 @@ export default function SummaryPage() {
               label="Top Scorer"
               value={String((topScorer as { goals: number }).goals)}
               subValue={`${(topScorer as { name: string }).name} · ${POSITION_LABELS[(topScorer as { position: PositionType }).position]}`}
-              accent
             />
           )}
           {topAssister && (
