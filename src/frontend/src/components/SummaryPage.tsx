@@ -173,72 +173,61 @@ export default function SummaryPage() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden bg-[#1a3a8f] rounded-2xl p-6 sm:p-8 field-pattern">
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <img
-              src="/assets/generated/knights-logo-transparent.dim_120x120.png"
-              alt="Knights Logo"
-              className="w-12 h-12 object-contain"
-            />
-            <div>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-background leading-none">
-                The Knights
-              </h2>
-              <p className="text-background/70 text-sm mt-0.5">
-                Season Overview
-              </p>
+      {/* Season Header */}
+      <div className="flex items-center gap-4 pb-2 border-b border-border">
+        <img
+          src="/assets/generated/knights-logo-transparent.dim_120x120.png"
+          alt="Knights Logo"
+          className="w-12 h-12 object-contain"
+        />
+        <div>
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground leading-none">
+            The Knights
+          </h2>
+          <p className="text-muted-foreground text-sm mt-0.5">
+            Season Overview
+          </p>
+        </div>
+        {totalGames > 0 && (
+          <div className="ml-auto flex items-center gap-4">
+            <div className="text-center">
+              <div className="stat-number text-3xl font-bold text-accent leading-none">
+                {wins}
+              </div>
+              <div className="text-muted-foreground text-xs mt-0.5">Wins</div>
+            </div>
+            <div className="text-muted-foreground text-xl font-light">-</div>
+            <div className="text-center">
+              <div className="stat-number text-3xl font-bold text-foreground/60 leading-none">
+                {losses}
+              </div>
+              <div className="text-muted-foreground text-xs mt-0.5">Losses</div>
+            </div>
+            {ties > 0 && (
+              <>
+                <div className="text-muted-foreground text-xl font-light">
+                  -
+                </div>
+                <div className="text-center">
+                  <div className="stat-number text-3xl font-bold text-foreground/50 leading-none">
+                    {ties}
+                  </div>
+                  <div className="text-muted-foreground text-xs mt-0.5">
+                    Ties
+                  </div>
+                </div>
+              </>
+            )}
+            <div className="ml-2 text-right">
+              <div className="stat-number text-xl font-bold text-accent leading-none">
+                {winPct}%
+              </div>
+              <div className="text-muted-foreground text-xs mt-0.5">
+                Win Rate
+              </div>
             </div>
           </div>
-
-          {totalGames > 0 && (
-            <div className="mt-4 flex items-center gap-4">
-              <div className="text-center">
-                <div className="stat-number text-4xl font-bold text-accent leading-none">
-                  {wins}
-                </div>
-                <div className="text-background/70 text-xs mt-0.5">Wins</div>
-              </div>
-              <div className="text-background/40 text-2xl font-light">-</div>
-              <div className="text-center">
-                <div className="stat-number text-4xl font-bold text-background/60 leading-none">
-                  {losses}
-                </div>
-                <div className="text-background/70 text-xs mt-0.5">Losses</div>
-              </div>
-              {ties > 0 && (
-                <>
-                  <div className="text-background/40 text-2xl font-light">
-                    -
-                  </div>
-                  <div className="text-center">
-                    <div className="stat-number text-4xl font-bold text-background/50 leading-none">
-                      {ties}
-                    </div>
-                    <div className="text-background/70 text-xs mt-0.5">
-                      Ties
-                    </div>
-                  </div>
-                </>
-              )}
-              <div className="ml-auto text-right">
-                <div className="stat-number text-2xl font-bold text-accent leading-none">
-                  {winPct}%
-                </div>
-                <div className="text-background/70 text-xs mt-0.5">
-                  Win Rate
-                </div>
-              </div>
-            </div>
-          )}
-
-          {totalGames === 0 && players && players.length === 0 && (
-            <p className="text-background/60 text-sm mt-2">
-              Sign in as admin to start adding players and logging games.
-            </p>
-          )}
-        </div>
+        )}
       </div>
 
       {hasData && (
