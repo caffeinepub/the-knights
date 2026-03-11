@@ -1,12 +1,3 @@
-import type { Principal } from "@icp-sdk/core/principal";
-export interface Some<T> {
-    __kind__: "Some";
-    value: T;
-}
-export interface None {
-    __kind__: "None";
-}
-export type Option<T> = Some<T> | None;
 export interface Player {
     id: bigint;
     name: string;
@@ -30,8 +21,13 @@ export interface Game {
     ourScore: bigint;
     opponent: string;
 }
-export interface UserProfile {
-    name: string;
+export interface ScheduledGame {
+    id: bigint;
+    date: Time;
+    opponent: string;
+    home: boolean;
+    location: string | null;
+    notes: string | null;
 }
 export enum PositionType {
     goalie = "goalie",
@@ -39,24 +35,18 @@ export enum PositionType {
     defense = "defense",
     attack = "attack"
 }
-export enum UserRole {
-    admin = "admin",
-    user = "user",
-    guest = "guest"
-}
 export interface backendInterface {
     addGame(date: Time, opponent: string, ourScore: bigint, opponentScore: bigint, home: boolean): Promise<bigint>;
     addPlayer(name: string, number: bigint, position: PositionType): Promise<void>;
-    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     getAllStats(): Promise<Array<[bigint, StatLine]>>;
-    getCallerUserProfile(): Promise<UserProfile | null>;
-    getCallerUserRole(): Promise<UserRole>;
     getGames(): Promise<Array<Game>>;
     getPlayerStats(playerId: bigint): Promise<StatLine>;
     getPlayers(): Promise<Array<Player>>;
-    getUserProfile(user: Principal): Promise<UserProfile | null>;
-    isCallerAdmin(): Promise<boolean>;
     removePlayer(playerId: bigint): Promise<void>;
-    saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updatePlayerStats(playerId: bigint, stats: StatLine): Promise<void>;
+    setPlayerPhoto(playerId: bigint, dataUrl: string): Promise<void>;
+    getAllPlayerPhotos(): Promise<Array<[bigint, string]>>;
+    addScheduledGame(date: Time, opponent: string, home: boolean, location: string | null, notes: string | null): Promise<bigint>;
+    removeScheduledGame(gameId: bigint): Promise<void>;
+    getScheduledGames(): Promise<Array<ScheduledGame>>;
 }

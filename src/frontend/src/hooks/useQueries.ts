@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PositionType, type StatLine } from "../backend";
+import { useAdmin } from "../contexts/AdminContext";
 import { useActor } from "./useActor";
 
 export { PositionType };
@@ -41,15 +42,8 @@ export function useAllStats() {
 }
 
 export function useIsAdmin() {
-  const { actor, isFetching } = useActor();
-  return useQuery({
-    queryKey: ["isAdmin"],
-    queryFn: async () => {
-      if (!actor) return false;
-      return actor.isCallerAdmin();
-    },
-    enabled: !!actor && !isFetching,
-  });
+  const { isAdmin } = useAdmin();
+  return { data: isAdmin };
 }
 
 export function useAddPlayer() {

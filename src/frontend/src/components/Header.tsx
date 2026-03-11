@@ -1,26 +1,45 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, Shield, User } from "lucide-react";
-import { useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Lock, LogOut, Shield } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
-import { useIsAdmin } from "../hooks/useQueries";
+import { useAdmin } from "../contexts/AdminContext";
 
 export default function Header() {
-  const { login, clear, loginStatus, identity, loginError } =
-    useInternetIdentity();
-  const { data: isAdmin } = useIsAdmin();
-  const isLoggedIn = loginStatus === "success" && !!identity;
-  const isLoggingIn = loginStatus === "logging-in";
+  const { isAdmin, login, logout } = useAdmin();
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
 
-  // Show a toast if login fails so the user knows what went wrong
-  useEffect(() => {
-    if (loginStatus === "loginError" && loginError) {
-      toast.error("Sign in failed", {
-        description: loginError.message,
-      });
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const ok = login(password);
+    if (ok) {
+      setOpen(false);
+      setPassword("");
+      setError(false);
+      toast.success("Admin mode unlocked");
+    } else {
+      setError(true);
     }
-  }, [loginStatus, loginError]);
+  };
+
+  const handleOpenChange = (v: boolean) => {
+    setOpen(v);
+    if (!v) {
+      setPassword("");
+      setError(false);
+    }
+  };
 
   return (
     <header className="bg-primary text-primary-foreground shadow-lg">
@@ -47,47 +66,36 @@ export default function Header() {
 
           {/* Auth controls */}
           <div className="flex items-center gap-3">
-            {isLoggedIn && (
-              <div className="hidden sm:flex items-center gap-2">
-                {isAdmin && (
-                  <Badge
-                    variant="outline"
-                    className="border-accent text-accent bg-accent/10 font-semibold"
-                  >
-                    <Shield className="w-3 h-3 mr-1" />
-                    Admin
-                  </Badge>
-                )}
-                <div className="flex items-center gap-1.5 text-primary-foreground/80 text-sm">
-                  <User className="w-3.5 h-3.5" />
-                  <span className="max-w-[120px] truncate">
-                    {identity.getPrincipal().toString().slice(0, 12)}...
-                  </span>
-                </div>
-              </div>
+            {isAdmin && (
+              <Badge
+                variant="outline"
+                className="border-accent text-accent bg-accent/10 font-semibold hidden sm:flex"
+              >
+                <Shield className="w-3 h-3 mr-1" />
+                Admin
+              </Badge>
             )}
 
-            {isLoggedIn ? (
+            {isAdmin ? (
               <Button
-                onClick={clear}
+                onClick={logout}
                 variant="outline"
                 size="sm"
                 data-ocid="header.logout.button"
                 className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
                 <LogOut className="w-4 h-4 mr-1.5" />
-                Sign Out
+                Lock
               </Button>
             ) : (
               <Button
-                onClick={login}
+                onClick={() => setOpen(true)}
                 size="sm"
                 data-ocid="header.login.button"
-                disabled={isLoggingIn}
                 className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold"
               >
-                <LogIn className="w-4 h-4 mr-1.5" />
-                {isLoggingIn ? "Signing in..." : "Sign In"}
+                <Lock className="w-4 h-4 mr-1.5" />
+                Admin
               </Button>
             )}
           </div>
@@ -96,6 +104,49 @@ export default function Header() {
 
       {/* Field stripe accent */}
       <div className="h-1 bg-accent" />
+
+      {/* Password dialog */}
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent data-ocid="header.login.dialog" className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-display">Admin Access</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleLogin} className="space-y-4 mt-1">
+            <div className="space-y-1.5">
+              <Label htmlFor="admin-password">Password</Label>
+              <Input
+                id="admin-password"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError(false);
+                }}
+                data-ocid="header.password.input"
+                autoFocus
+              />
+              {error && (
+                <p
+                  className="text-sm text-destructive"
+                  data-ocid="header.login.error_state"
+                >
+                  Incorrect password. Please try again.
+                </p>
+              )}
+            </div>
+            <DialogFooter>
+              <Button
+                type="submit"
+                data-ocid="header.login.submit_button"
+                className="w-full bg-foreground hover:bg-foreground/90 text-background"
+              >
+                Unlock
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }
